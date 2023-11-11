@@ -20,6 +20,10 @@ public class Hotel {
 
     private Integer nbEtoiles;
 
+    @ManyToOne
+    @JoinColumn(name = "agence_id")
+    private Agence agence;
+
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)  // Assurez-vous de définir correctement le type de relation avec Chambre
     private List<Chambre> chambres;
 
@@ -60,6 +64,14 @@ public class Hotel {
         return nbEtoiles;
     }
 
+    public Agence getAgence() {
+        return agence;
+    }
+
+    public void setAgence(Agence agence) {
+        this.agence = agence;
+    }
+
     @Override
     public String toString() {
         return "Hotel{" +
@@ -71,4 +83,6 @@ public class Hotel {
                 ", nombreChambres=" + chambres.size() +
                 '}';
     }
+
+
 }
