@@ -1,5 +1,6 @@
 package Rest.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 
@@ -17,6 +18,7 @@ public class Agence {
     private String motDePasse;
 
     @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Hotel> hotels;
 
     public Agence() {
@@ -60,6 +62,13 @@ public class Agence {
     public void setHotels(List<Hotel> hotels) {
         this.hotels = hotels;
     }
+    public void setHotel(Hotel hotel) {
+        if (this.hotels == null) {
+            this.hotels = new ArrayList<>();
+        }
+        this.hotels.add(hotel);
+    }
+
 
     public void ajouterHotel(Hotel hotel) {
         hotels.add(hotel);

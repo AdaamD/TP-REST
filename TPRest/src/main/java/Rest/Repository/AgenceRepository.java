@@ -8,11 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AgenceRepository extends JpaRepository<Agence, Long> {
 
-    // Trouver une agence par son nom
-    //Agence findByNom(String nom);
+    Optional<Agence> findByNom(String nom);
 
     // Trouver une agence par son nom et mot de passe
     Agence findByNomAndMotDePasse(String nom, String motDePasse);

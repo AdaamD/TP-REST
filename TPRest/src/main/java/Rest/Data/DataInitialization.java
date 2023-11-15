@@ -10,8 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import Rest.Models.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+
+
+/* Le .save(...) sert a sauvegarder l'entité que t'as crée/modifié */
 @Configuration
 @EnableTransactionManagement
     public class DataInitialization {
@@ -45,9 +50,13 @@ import java.util.Date;
 
                 Agence agence2 = new Agence("Agence Tourisme Aventure", "pass123");
                 agenceRepository.save(agence2);
+                agence2.ajouterHotel(hotel2);
+                agenceRepository.save(agence2);
                 logger.info("   Agence saved: " + agence2);
+                logger.info("hotel de l'agence 2 "+agence2.getHotels());
 
-            //CarteCredit
+
+                //CarteCredit
                 CarteCredit carteCredit1 = new CarteCredit(123456789, new Date(), 123);
                 carteCreditRepository.save(carteCredit1);
                 logger.info("   CarteCredit saved: " + carteCredit1);
