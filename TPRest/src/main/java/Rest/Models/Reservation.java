@@ -20,18 +20,22 @@ public class Reservation {
     private String dateArrive;
     private String dateDepart;
 
+    @ManyToOne
+    @JoinColumn(name = "offre_id")
+    private Offre offre;
+
     public Reservation() {
     }
 
-    public Reservation(String nom, String prenom, Client client, double prixAPayer, String dateArrive, String dateDepart) {
+    public Reservation(String nom, String prenom, Client client, double prixAPayer, String dateArrive, String dateDepart, Offre offre) {
         this.nom = nom;
         this.prenom = prenom;
         this.client = client;
         this.prixAPayer = prixAPayer;
         this.dateArrive = dateArrive;
         this.dateDepart = dateDepart;
+        this.offre = offre;
     }
-
     public Reservation(String nom, String prenom, Client client, double prixAPayer) {
         this.nom = nom;
         this.prenom = prenom;

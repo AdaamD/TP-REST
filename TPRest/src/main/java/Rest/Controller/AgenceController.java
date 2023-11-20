@@ -1,43 +1,50 @@
 package Rest.Controller;
 
-import Rest.Models.Agence;
-import Rest.Models.Hotel;
-import Rest.Repository.AgenceRepository;
+import Rest.Data.DataInitialization;
+import Rest.Models.Chambre;
+import Rest.Models.Offre;
+import Rest.Repository.OffreRepository;
+import Rest.Service.AvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-/*  Ce service web va retourner un fihcier json avec les hotels partenaires de cete agence
- disponible quand tu écris ca : http://localhost:8080/agences/Agence%20Tourisme%20Aventure/hotels
-* */
-
 @RestController
 @RequestMapping("/agences")
 public class AgenceController {
-    private final AgenceRepository agenceRepository;
+
+    private final AvailabilityService availabilityService;
+    private final DataInitialization dataInitialization;
+    private final OffreRepository offreRepository;
 
     @Autowired
-    public AgenceController(AgenceRepository agenceRepository) {
-        this.agenceRepository = agenceRepository;
+    public AgenceController(AvailabilityService availabilityService, DataInitialization dataInitialization, OffreRepository offreRepository) {
+        this.availabilityService = availabilityService;
+        this.dataInitialization = dataInitialization;
+        this.offreRepository = offreRepository;
     }
 
-    @GetMapping("/{nomAgence}/hotels")
-    public ResponseEntity<List<Hotel>> getHotelsByAgence(@PathVariable String nomAgence) {
-        Optional<Agence> agenceOptional = agenceRepository.findByNom(nomAgence);
+    @GetMapping("/consult-availability")
+    public ResponseEntity<List<Offre>> consultAvailability(
+            @RequestParam String identifiant,
+            @RequestParam String motDePasse,
+            @RequestParam String dateDebut,
+            @RequestParam int nombreLit) {
 
-        if (agenceOptional.isPresent()) {
-            Agence agence = agenceOptional.get();
-            List<Hotel> hotels = agence.getHotels();
-            return new ResponseEntity<>(hotels, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // Vérifiez l'identifiant et le mot de passe
+        boolean credentialsValid = dataInitialization.validateCredentials(identifiant, motDePasse);
+
+        if (!credentialsValid) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
+        // Votre logique métier pour consulter les disponibilités
+        List<Offre> availableOffers = availabilityService.getAvailableOffersByAgence(identifiant, dateDebut, nombreLit);
+
+        return new ResponseEntity<>(availableOffers, HttpStatus.OK);
     }
 }

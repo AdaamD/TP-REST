@@ -1,5 +1,7 @@
 package Rest.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -17,8 +19,8 @@ public class Agence {
     private String nom;
     private String motDePasse;
 
-    @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonBackReference
+    @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL)
     private List<Hotel> hotels;
 
     public Agence() {

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 //Indique où trouver les Models
 @EntityScan(basePackages = "Rest.Models")
 @EnableJpaRepositories(basePackages = "Rest.Repository")
-@SpringBootApplication(scanBasePackages = {"Rest.Data", "Rest.Controller"})
+@SpringBootApplication(scanBasePackages = {"Rest.Data", "Rest.Controller", "Rest.Service"})
 public class RestV2Application {
 
     public static void main(String[] args) {

@@ -1,7 +1,9 @@
 package Rest.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+import java.util.List;
 
 
 @Entity
@@ -13,6 +15,7 @@ public class Chambre {
 
     private int numChambre;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
@@ -23,6 +26,9 @@ public class Chambre {
 
     @Column(nullable = false)
     private boolean disponible;
+
+    @OneToMany(mappedBy = "chambre")
+    private List<Offre> offres;
 
     private String image;
 

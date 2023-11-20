@@ -2,6 +2,7 @@ package Rest.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Hotel {
 
     private Integer nbEtoiles;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "agence_id")
     private Agence agence;
