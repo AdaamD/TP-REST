@@ -9,6 +9,8 @@ import Rest.Repository.ClientRepository;
 import Rest.Repository.OffreRepository;
 import Rest.Repository.ReservationRepository;
 import Rest.Service.AvailabilityService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,7 @@ public class AgenceController {
     }
 
     @GetMapping("/consulter-disponibilite")
-    public ResponseEntity<List<Offre>> consultAvailability(
+    public ResponseEntity<String> consulterDisponibilite(
             @RequestParam String identifiant,
             @RequestParam String motDePasse,
             @RequestParam String dateDebut,
@@ -55,9 +57,17 @@ public class AgenceController {
         }
 
         // Votre logique métier pour consulter les disponibilités
-        List<Offre> offresDisponible = availabilityService.getAvailableOffersByAgence(identifiant, dateDebut, nombreLit);
+        List<Offre> availableOffers = availabilityService.getAvailableOffersByAgence(identifiant, dateDebut, nombreLit);
 
-        return new ResponseEntity<>(offresDisponible, HttpStatus.OK);
+// Convertir les offres en format JSON pour la page html
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String formattedOffers = objectMapper.writeValueAsString(availableOffers);
+            return new ResponseEntity<>(formattedOffers, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/effectuerReservation")
@@ -65,18 +75,11 @@ public class AgenceController {
             @RequestParam String nomAgence,
             @RequestParam String mdpAgence,
             @RequestParam Long offreId,
-            @RequestParam String nomClient,
-            @RequestParam String prenomClient) {
+            @RequestBody Client clientData) {
 
         boolean authentificationValide = dataInitialization.validateCredentials(nomAgence, mdpAgence);
         if (!authentificationValide) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        // Rechercher le client par nom et prénom
-        Optional<Client> clientOptional = clientRepository.findByNomAndPrenom(nomClient, prenomClient);
-        if (clientOptional.isEmpty()) {
-            return ResponseEntity.status(404).body("Le client spécifié n'existe pas");
         }
 
         // Vérifier l'existence de l'offre avec l'identifiant offreId
@@ -88,8 +91,17 @@ public class AgenceController {
         // Récupérer l'offre depuis l'Optional
         Offre offre = offreOptional.get();
 
-        // Récupérer le client depuis l'Optional
-        Client client = clientOptional.get();
+        // Créer un client avec les données reçues
+        Client client = new Client(
+                clientData.getNom(),
+                clientData.getPrenom(),
+                clientData.getMail(),
+                clientData.getTelephone(),
+                clientData.getCarteCredit()
+        );
+
+        // Sauvegarder le client
+        clientRepository.save(client);
 
         // Créer une réservation avec l'offre et le client
         Reservation reservation = new Reservation(
@@ -105,6 +117,7 @@ public class AgenceController {
         // Retourner une réponse appropriée
         return ResponseEntity.ok("Réservation effectuée avec succès");
     }
+
 
     @GetMapping("/consulterreservations")
     public ResponseEntity<List<Reservation>> getAllReservations() {
