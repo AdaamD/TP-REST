@@ -1,5 +1,6 @@
 package Rest.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,8 +13,9 @@ public class Reservation {
     private String nom;
     private String prenom;
 
+    @JsonManagedReference
     @ManyToOne
-    @JoinColumn(name = "client_id")  // Assurez-vous de définir correctement le type de relation avec Client
+    @JoinColumn(name = "client_id") // Assurez-vous de définir correctement le type de relation avec Client
     private Client client;
 
     private double prixAPayer;

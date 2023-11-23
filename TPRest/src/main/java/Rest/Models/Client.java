@@ -1,5 +1,6 @@
 package Rest.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class Client {
     @JoinColumn(name = "carte_credit_id", referencedColumnName = "id")
     private CarteCredit carteCredit;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 

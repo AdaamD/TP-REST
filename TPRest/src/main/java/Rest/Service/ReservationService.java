@@ -7,23 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final OffreRepository offreRepository;
+    private final ClientRepository clientRepository; // Ajoutez le repository pour accéder à la base de données des clients
     private final DataInitialization dataInitialization;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, OffreRepository offreRepository, DataInitialization dataInitialization) {
+    public ReservationService(ReservationRepository reservationRepository, OffreRepository offreRepository, ClientRepository clientRepository, DataInitialization dataInitialization) {
         this.reservationRepository = reservationRepository;
         this.offreRepository = offreRepository;
+        this.clientRepository = clientRepository;
         this.dataInitialization = dataInitialization;
     }
 
-    public ResponseEntity<String> makeReservation(String agenceNom, String motDePasse, int offreId, String nom, String prenom, @RequestBody Client client) {
+    public ResponseEntity<String> makeReservation(String agenceNom, String motDePasse, int offreId, String nom, String prenom) {
         // Vérifier l'authentification
         boolean credentialsValid = dataInitialization.validateCredentials(agenceNom, motDePasse);
 
@@ -35,9 +36,24 @@ public class ReservationService {
         // Récupérer l'offre à partir de l'ID
         Offre offre = offreRepository.findById((long) offreId).orElse(null);
 
-        if (offre == null || !offre.getChambre().isDisponible()) {
+
+        if (offre == null || offre.getChambre() == null) {
             // Gérer l'offre non trouvée ou la chambre non disponible
             return new ResponseEntity<>("Échec de la réservation. L'offre n'est pas disponible.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!offre.getChambre().isDisponible()) {
+            // Gérer la chambre non disponible
+            return new ResponseEntity<>("Échec de la réservation. La chambre n'est pas disponible.", HttpStatus.BAD_REQUEST);
+        }
+
+
+        // Rechercher le client dans la base de données en fonction du nom et du prénom
+        Client client = clientRepository.findByNomAndPrenom(nom, prenom).orElse(null);
+
+        if (client == null) {
+            // Gérer l'absence du client dans la base de données
+            return new ResponseEntity<>("Échec de la réservation. Client inconnu.", HttpStatus.BAD_REQUEST);
         }
 
         // Calculer le prix de la réservation (vous pouvez ajouter votre logique ici)
@@ -61,10 +77,10 @@ public class ReservationService {
         Offre offre = offreRepository.findById((long) offreId).orElse(null);
 
         // Vérification de la disponibilité de l'offre
-        if (offre == null ) {
+       // if (offre == null || !offre.isDisponible()) {
             // Gérer l'offre non trouvée ou non disponible
-            return new ResponseEntity<>("Échec de la réservation. L'offre n'est pas disponible.", HttpStatus.BAD_REQUEST);
-        }
+         //   return new ResponseEntity<>("Échec de la réservation. L'offre n'est pas disponible.", HttpStatus.BAD_REQUEST);
+        //}
 
         // L'offre est disponible
         return new ResponseEntity<>("L'offre est disponible.", HttpStatus.OK);
