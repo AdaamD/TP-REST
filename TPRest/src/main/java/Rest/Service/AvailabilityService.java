@@ -39,6 +39,7 @@ public class AvailabilityService {
                     if (chambre.getNombreLit() >= nombreLit && chambre.isDisponible()) {
                         // Créez une nouvelle offre
                         Offre offre = createOffer(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom());
+                        offre.setImageURL(chambre.getImage());
                         offreRepository.save(offre); // Sauvegarde de l'offre en base de données
                         availableOffers.add(offre);
                     }

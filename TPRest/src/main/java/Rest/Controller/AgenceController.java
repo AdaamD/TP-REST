@@ -1,6 +1,7 @@
 package Rest.Controller;
 
 import Rest.Data.DataInitialization;
+import Rest.Models.CarteCredit;
 import Rest.Models.Client;
 import Rest.Models.Offre;
 import Rest.Models.Reservation;
@@ -16,13 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 /*
 http://localhost:8080/agences/consult-availability?identifiant=yourUsername&motDePasse=yourPassword&dateDebut=2023-12-01&nombreLit=2
 */
-
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/agences")
 public class AgenceController {
@@ -75,7 +77,8 @@ public class AgenceController {
             @RequestParam String nomAgence,
             @RequestParam String mdpAgence,
             @RequestParam Long offreId,
-            @RequestBody Client clientData) {
+            @RequestParam String nomClient,
+            @RequestParam String prenomClient) {
 
         boolean authentificationValide = dataInitialization.validateCredentials(nomAgence, mdpAgence);
         if (!authentificationValide) {
@@ -91,23 +94,22 @@ public class AgenceController {
         // Récupérer l'offre depuis l'Optional
         Offre offre = offreOptional.get();
 
-        // Créer un client avec les données reçues
-        Client client = new Client(
-                clientData.getNom(),
-                clientData.getPrenom(),
-                clientData.getMail(),
-                clientData.getTelephone(),
-                clientData.getCarteCredit()
-        );
+        // Rechercher le client dans la base de données
+        Optional<Client> existingClientOptional = clientRepository.findByNomAndPrenom(nomClient, prenomClient);
 
-        // Sauvegarder le client
-        clientRepository.save(client);
+        if (existingClientOptional.isEmpty()) {
+            // Le client n'existe pas dans la base, ne pas autoriser la réservation
+            return ResponseEntity.status(400).body("Le client n'est pas enregistré. Impossible de faire la réservation.");
+        }
+
+        // Obtenez le client depuis l'Optional
+        Client existingClient = existingClientOptional.get();
 
         // Créer une réservation avec l'offre et le client
         Reservation reservation = new Reservation(
-                client.getNom(),
-                client.getPrenom(),
-                client,
+                existingClient.getNom(),
+                existingClient.getPrenom(),
+                existingClient,
                 offre.getPrix()
         );
 

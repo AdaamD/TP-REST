@@ -21,6 +21,8 @@ public class Offre {
     @JoinColumn(name = "chambre_id")  // Assurez-vous de définir correctement le type de relation avec Chambre
     private Chambre chambre;
 
+    private String imageURL ;
+
 
     public Offre() {
     }
@@ -99,4 +101,11 @@ public class Offre {
         this.chambre = chambre;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String image) {
+        this.imageURL = image;
+    }
 }

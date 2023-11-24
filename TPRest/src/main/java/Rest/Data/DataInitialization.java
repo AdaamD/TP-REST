@@ -89,25 +89,25 @@ import java.util.Optional;
             //Chambre
                 Chambre chambre1 = new Chambre(1, hotel1, 1, 1, 100);
                 chambre1.setDisponible(true);
-                //chambre1.setImage("chemin/vers/image1.jpg");
+                chambre1.setImage("img/img1.jpg");
                 chambreRepository.save(chambre1);
                 logger.info("   Chambre saved: " + chambre1);
 
                 Chambre chambre2 = new Chambre(2, hotel2, 2, 2, 150);
                 chambre2.setDisponible(true);
-                //chambre2.setImage("chemin/vers/image2.jpg");
+                chambre2.setImage("img/img2.jpg");
                 chambreRepository.save(chambre2);
                 logger.info("   Chambre saved: " + chambre2);
 
                 Chambre chambre3 = new Chambre(3, hotel2, 1, 2, 100);
                 chambre3.setDisponible(true);
-                //chambre3.setImage("chemin/vers/image3.jpg");
+                chambre3.setImage("img/img3.jpg");
                 chambreRepository.save(chambre3);
                 logger.info("   Chambre saved: " + chambre3);
 
                 Chambre chambre4 = new Chambre(4, hotel1, 1, 2, 110);
                 chambre4.setDisponible(true);
-                //chambre4.setImage("chemin/vers/image4.jpg");
+                chambre4.setImage("img/img4.jpg");
                 chambreRepository.save(chambre4);
                 logger.info("   Chambre saved: " + chambre4);
 
