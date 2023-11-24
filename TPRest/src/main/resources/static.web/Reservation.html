@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation de chambre</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 
@@ -25,21 +26,21 @@
     <label for="prenomClient">Prénom du client:</label>
     <input type="text" id="prenomClient" name="prenomClient" required><br>
 
-    <label for="mailClient">Email du client:</label>
-    <input type="email" id="mailClient" name="mailClient" required><br>
-
-    <label for="telephoneClient">Téléphone du client:</label>
-    <input type="tel" id="telephoneClient" name="telephoneClient" required><br>
-
-    <label for="carteCreditClient">Numéro de carte de crédit du client:</label>
-    <input type="number" id="carteCreditClient" name="carteCreditClient" required><br>
-
     <input type="submit" value="Réserver">
 </form>
 
 <div id="reservationResult"></div>
 
 <script>
+    // Récupérez les paramètres de l'URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var offreIdParam = urlParams.get('offreId');
+
+    // Si le paramètre offreId existe, pré-remplissez le champ correspondant
+    if (offreIdParam) {
+        document.getElementById('offreId').value = offreIdParam;
+    }
+
     document.getElementById('reservationForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Empêche le formulaire de se soumettre normalement
 
@@ -49,43 +50,28 @@
         var offreId = document.getElementById('offreId').value;
         var nomClient = document.getElementById('nomClient').value;
         var prenomClient = document.getElementById('prenomClient').value;
-        var mailClient = document.getElementById('mailClient').value;
-        var telephoneClient = document.getElementById('telephoneClient').value;
-        var carteCreditClient = document.getElementById('carteCreditClient').value;
 
         // Effectuez la requête avec les paramètres
-        makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient, mailClient, telephoneClient, carteCreditClient);
+        makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient);
     });
 
-    function makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient, mailClient, telephoneClient, carteCreditClient) {
+    function makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient) {
         var xhr = new XMLHttpRequest();
 
         // Construisez l'URL avec les paramètres
         var url = 'http://localhost:8080/agences/effectuerReservation?' +
             'nomAgence=' + agenceNom +
             '&mdpAgence=' + motDePasse +
-            '&offreId=' + offreId;
-
-        // Créez un objet Client à envoyer en tant que JSON dans le corps de la requête
-        var clientData = {
-            nom: nomClient,
-            prenom: prenomClient,
-            mail: mailClient,
-            telephone: telephoneClient,
-            carteCredit: {
-                numero: carteCreditClient,
-                dateExp: '2023-11-23T17:48:33.697+00:00',
-                crypto: 111
-            }
-        };
+            '&offreId=' + offreId +
+            '&nomClient=' + nomClient +
+            '&prenomClient=' + prenomClient;
 
         xhr.open('POST', url, true);
-        //xhr.setRequestHeader('Content-Type', 'application/json');
 
         xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
-                var responseData = JSON.parse(xhr.responseText);
-                displayReservationResult(responseData);
+                // Affichez une alerte pour confirmer la réservation
+                alert('Réservation confirmée!');
             } else {
                 console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
             }
@@ -95,18 +81,10 @@
             console.error('Erreur de réseau lors de la tentative de faire la requête.');
         };
 
-        // Convertissez l'objet client en chaîne JSON et envoyez-le dans le corps de la requête
-        xhr.send(JSON.stringify(clientData));
-    }
-
-    function displayReservationResult(result) {
-        var resultDiv = document.getElementById('reservationResult');
-        // Manipulez les données comme vous le souhaitez ici
-        resultDiv.innerHTML = '<h2>Résultat de la réservation :</h2>';
-        resultDiv.innerHTML += '<p>' + JSON.stringify(result, null, 2) + '</p>'; // Affichez le résultat de la réservation
+        // Envoyez la requête sans le corps (les données du client seront dans l'URL)
+        xhr.send();
     }
 </script>
-
 
 </body>
 </html>

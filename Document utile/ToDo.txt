@@ -1,0 +1,3 @@
+-Gestion d'erreur : affichage des erreurs plus tot qu'en console 
+-Resumé de reservations avec prix a payer ect ...
+-Netoyyage du code + supprimer le franglais 

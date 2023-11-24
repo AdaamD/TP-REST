@@ -83,24 +83,32 @@
             <th>Numero de la chambre</th>
             <th>Nombre de lits</th>
             <th>Image</th>
+            <th>Action</th> <!-- Nouvelle colonne pour le bouton de réservation -->
         </tr>
     `;
 
-        data.forEach(function(offre) {
+        data.forEach(function (offre) {
             var row = table.insertRow();
             row.innerHTML = `
             <td>${offre.idOffre}</td>
-            <td>${offre.prix}</td>
+            <td>${offre.prix} euros</td>
             <td>${offre.nomHotel}</td>
             <td>${offre.numeroChambre}</td>
             <td>${offre.nombreLits}</td>
-<td>
-            <img src="/${offre.imageURL}"  class="image-clickable" onclick="showImage('${offre.imageURL}')">
-        </td>
+            <td>
+                <img src="/${offre.imageURL}" class="image-preview">
+            </td>
+            <td>
+                <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
+            </td>
         `;
         });
 
         resultDiv.appendChild(table);
+    }
+    function makeReservation(offreId) {
+        // Redirigez l'utilisateur vers la page de création de réservation avec l'identifiant de l'offre
+        window.location.href = 'Reservation.html?offreId=' + offreId;
     }
 
     // Ajoutez cette fonction pour afficher l'image en grand
