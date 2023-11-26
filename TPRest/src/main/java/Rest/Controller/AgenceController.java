@@ -1,6 +1,8 @@
 package Rest.Controller;
 
 import Rest.Data.DataInitialization;
+import Rest.Exception.NoOfferException;
+import Rest.Exception.UnauthorizedException;
 import Rest.Models.Client;
 import Rest.Models.Offre;
 import Rest.Models.Reservation;
@@ -56,11 +58,17 @@ public class AgenceController {
         boolean credentialsValid = dataInitialization.validateCredentials(identifiant, motDePasse);
 
         if (!credentialsValid) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedException("L'authentification a échoué. Veuillez vérifier vos informations.");
+
         }
 
         // Votre logique métier pour consulter les disponibilités
         List<Offre> availableOffers = rechercheChambreService.getAvailableOffersByAgence(identifiant, dateDebut, nombreLit);
+
+        if (availableOffers.isEmpty()) {
+            throw new NoOfferException("Aucune offre disponible pour les critères spécifiés.");
+        }
 
 // Convertir les offres en format JSON pour la page html
         ObjectMapper objectMapper = new ObjectMapper();
@@ -72,16 +80,18 @@ public class AgenceController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @ResponseBody
     @PostMapping("/effectuerReservation")
     public ResponseEntity<String> effectuerReservation(
             @RequestParam String nomAgence,
             @RequestParam String mdpAgence,
             @RequestParam Long offreId,
+            @RequestParam String dateArrive,
+            @RequestParam String dateDepart,
             @RequestParam String nomClient,
             @RequestParam String prenomClient) {
 
-        return reservationService.makeReservation(nomAgence, mdpAgence, offreId, nomClient, prenomClient);
+        return reservationService.makeReservation(nomAgence, mdpAgence, offreId,dateArrive,dateDepart ,nomClient, prenomClient);
     }
 
 

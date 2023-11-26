@@ -28,6 +28,8 @@ public class RechercheChambreService {
     }
 
     public List<Offre> getAvailableOffersByAgence(String agenceNom, String dateDebut, int nombreLit) {
+
+
         Optional<Agence> agenceOptional = agenceRepository.findByNom(agenceNom);
 
         if (agenceOptional.isPresent()) {

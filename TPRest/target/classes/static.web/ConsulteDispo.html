@@ -58,8 +58,15 @@
             if (xhr.status >= 200 && xhr.status < 300) {
                 var responseData = JSON.parse(xhr.responseText);
                 displayData(responseData);
-            } else {
-                console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
+            } else
+            {
+                if (xhr.status==401){
+                alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
+                }else
+                if (xhr.status==404){
+                alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
+            }
+
             }
         };
 

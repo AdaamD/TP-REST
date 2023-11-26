@@ -26,6 +26,13 @@
     <label for="prenomClient">Prénom du client:</label>
     <input type="text" id="prenomClient" name="prenomClient" required><br>
 
+    <!-- Ajout des champs de date d'arrivée et de départ -->
+    <label for="dateArrive">Date d'arrivée:</label>
+    <input type="date" id="dateArrive" name="dateArrive" required><br>
+
+    <label for="dateDepart">Date de départ:</label>
+    <input type="date" id="dateDepart" name="dateDepart" required><br>
+
     <input type="submit" value="Réserver">
 </form>
 
@@ -56,13 +63,19 @@
     });
 
     function makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient) {
+        // Récupérez les valeurs des champs de date
+        var dateArrive = document.getElementById('dateArrive').value;
+        var dateDepart = document.getElementById('dateDepart').value;
+
         var xhr = new XMLHttpRequest();
 
-        // Construisez l'URL avec les paramètres
+        // Construisez l'URL avec les paramètres, y compris les dates d'arrivée et de départ
         var url = 'http://localhost:8080/agences/effectuerReservation?' +
             'nomAgence=' + agenceNom +
             '&mdpAgence=' + motDePasse +
             '&offreId=' + offreId +
+            '&dateArrive=' + dateArrive +
+            '&dateDepart=' + dateDepart +
             '&nomClient=' + nomClient +
             '&prenomClient=' + prenomClient;
 
@@ -72,6 +85,9 @@
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Affichez une alerte pour confirmer la réservation
                 alert('Réservation confirmée!');
+
+                // Afficher un récapitulatif de la réservation
+                displayReservationSummary(JSON.parse(xhr.responseText));
             } else {
                 console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
             }
@@ -83,6 +99,14 @@
 
         // Envoyez la requête sans le corps (les données du client seront dans l'URL)
         xhr.send();
+    }
+
+    // Fonction pour afficher un récapitulatif de la réservation
+    function displayReservationSummary(reservationDetails) {
+        console.log('Détails de la réservation reçus :', reservationDetails);
+        var resultDiv = document.getElementById('reservationResult');
+        resultDiv.innerHTML = '<h2>Récapitulatif de la réservation :</h2><pre>' + reservationDetails + '</pre>';
+        // Ajoutez d'autres informations de réservation si nécessaire
     }
 </script>
 

@@ -29,20 +29,21 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String nom, String prenom, Client client, double prixAPayer, String dateArrive, String dateDepart, Offre offre) {
+    public Reservation(String nom, String prenom, Client client, String dateArrive, String dateDepart ,double prixAPayer, Offre offre) {
         this.nom = nom;
         this.prenom = prenom;
         this.client = client;
-        this.prixAPayer = prixAPayer;
         this.dateArrive = dateArrive;
         this.dateDepart = dateDepart;
+        this.prixAPayer = prixAPayer;
         this.offre = offre;
     }
-    public Reservation(String nom, String prenom, Client client, double prixAPayer) {
+    public Reservation(String nom, String prenom, Client client, double prixAPayer, Offre offre) {
         this.nom = nom;
         this.prenom = prenom;
         this.client = client;
         this.prixAPayer = prixAPayer;
+        this.offre=offre ;
     }
 
     public int getId() {

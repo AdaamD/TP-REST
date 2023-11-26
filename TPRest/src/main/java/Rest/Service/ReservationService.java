@@ -30,7 +30,7 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public ResponseEntity<String> makeReservation(String nomAgence, String mdpAgence, Long offreId, String nomClient, String prenomClient) {
+    public ResponseEntity<String> makeReservation(String nomAgence, String mdpAgence, Long offreId, String dateArrive , String dateDepart,String nomClient, String prenomClient) {
         boolean authentificationValide = dataInitialization.validateCredentials(nomAgence, mdpAgence);
 
         if (!authentificationValide) {
@@ -56,11 +56,25 @@ public class ReservationService {
                 existingClient.getNom(),
                 existingClient.getPrenom(),
                 existingClient,
-                offre.getPrix()
+                dateArrive,
+                dateDepart,
+                offre.getPrix(),
+                offre
         );
 
         reservationRepository.save(reservation);
 
-        return ResponseEntity.ok("Réservation effectuée avec succès");
+        String reservationDetails = String.format(
+                "Numéro de réservation : %d\nNom du client : %s\nPrénom du client : %s\nDate d'arrivée : %s\nDate de départ : %s\nPrix de l'offre : %s euros",
+                reservation.getId(),
+                reservation.getNom(),
+                reservation.getPrenom(),
+                reservation.getDateArrive(),
+                reservation.getDateDepart(),
+                reservation.getPrixAPayer()
+        );
+
+        // Retournez la chaîne de texte dans la réponse
+        return ResponseEntity.ok(reservationDetails);
     }
 }
