@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche de chambre</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+<h1>Recherche de chambre</h1>
+
+<form id="searchForm">
+    <label for="identifiant">Identifiant de l'agence:</label>
+    <input type="text" id="identifiant" name="identifiant" required><br>
+
+    <label for="motDePasse">Mot de passe:</label>
+    <input type="password" id="motDePasse" name="motDePasse" required><br>
+
+    <label for="dateDebut">Date de début:</label>
+    <input type="date" id="dateDebut" name="dateDebut" required><br>
+
+    <label for="nombreLit">Nombre de lits:</label>
+    <input type="number" id="nombreLit" name="nombreLit" required><br>
+
+    <input type="submit" value="Rechercher">
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche le formulaire de se soumettre normalement
+
+        // Récupérez les valeurs des champs
+        var identifiant = document.getElementById('identifiant').value;
+        var motDePasse = document.getElementById('motDePasse').value;
+        var dateDebut = document.getElementById('dateDebut').value;
+        var nombreLit = document.getElementById('nombreLit').value;
+
+        // Effectuez la requête avec les paramètres
+        makeRequest(identifiant, motDePasse, dateDebut, nombreLit);
+    });
+
+    function makeRequest(identifiant, motDePasse, dateDebut, nombreLit) {
+        var xhr = new XMLHttpRequest();
+
+        // Construisez l'URL avec les paramètres
+        var url = 'http://localhost:8080/agences/consulter-disponibilite?' +
+            'identifiant=' + identifiant +
+            '&motDePasse=' + motDePasse +
+            '&dateDebut=' + dateDebut +
+            '&nombreLit=' + nombreLit;
+
+        xhr.open('GET', url, true);
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                var responseData = JSON.parse(xhr.responseText);
+                displayData(responseData);
+            } else
+            {
+                if (xhr.status==401){
+                alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
+                }else
+                if (xhr.status==404){
+                alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
+            }
+
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('Erreur de réseau lors de la tentative de faire la requête.');
+        };
+
+        xhr.send();
+    }
+
+    function displayData(data) {
+        var resultDiv = document.getElementById('result');
+        // Créez un tableau HTML pour afficher les offres
+        resultDiv.innerHTML = '<h2>Résultats :</h2>';
+        var table = document.createElement('table');
+        table.innerHTML = `
+        <tr>
+            <th>Identifiant de l'offre</th>
+            <th>Prix à payer </th>
+            <th>Nom de l'hôtel</th>
+            <th>Numero de la chambre</th>
+            <th>Nombre de lits</th>
+            <th>Image</th>
+            <th>Action</th> <!-- Nouvelle colonne pour le bouton de réservation -->
+        </tr>
+    `;
+
+        data.forEach(function (offre) {
+            var row = table.insertRow();
+            row.innerHTML = `
+            <td>${offre.idOffre}</td>
+            <td>${offre.prix} euros</td>
+            <td>${offre.nomHotel}</td>
+            <td>${offre.numeroChambre}</td>
+            <td>${offre.nombreLits}</td>
+            <td>
+                <img src="/${offre.imageURL}" class="image-preview">
+            </td>
+            <td>
+                <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
+            </td>
+        `;
+        });
+
+        resultDiv.appendChild(table);
+    }
+    function makeReservation(offreId) {
+        // Redirigez l'utilisateur vers la page de création de réservation avec l'identifiant de l'offre
+        window.location.href = 'Reservation.html?offreId=' + offreId;
+    }
+
+    // Ajoutez cette fonction pour afficher l'image en grand
+    function showImage(imageUrl) {
+        window.open("/"+imageUrl, '_blank');
+    }
+</script>
+
+</body>
+</html>
