@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparateur d'offres d'hébergement</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+
+<body>
+
+<h1>Comparateur d'offres d'hébergement</h1>
+
+<form id="compareForm">
+  <label for="identifiant">Identifiant:</label>
+  <input type="text" id="identifiant" name="identifiant" required><br>
+
+  <label for="motDePasse">Mot de passe:</label>
+  <input type="password" id="motDePasse" name="motDePasse" required><br>
+
+  <label for="dateDebut">Date de début:</label>
+  <input type="date" id="dateDebut" name="dateDebut" required><br>
+
+  <label for="dateFin">Date de fin:</label>
+  <input type="date" id="dateFin" name="dateFin" required><br>
+
+  <label for="nombrePersonnes">Nombre de personnes:</label>
+  <input type="number" id="nombrePersonnes" name="nombrePersonnes" required><br>
+
+  <label for="nombreEtoiles">Nombre d'étoiles minimum:</label>
+  <input type="number" id="nombreEtoiles" name="nombreEtoiles" required><br>
+
+  <input type="submit" value="Comparer les offres">
+</form>
+
+<div id="compareResult"></div>
+
+<script>
+  document.getElementById('compareForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Empêche le formulaire de se soumettre normalement
+
+    // Récupérez les valeurs des champs
+    var identifiant = document.getElementById('identifiant').value;
+    var motDePasse = document.getElementById('motDePasse').value;
+    var dateDebut = document.getElementById('dateDebut').value;
+    var dateFin = document.getElementById('dateFin').value;
+    var nombrePersonnes = document.getElementById('nombrePersonnes').value;
+    var nombreEtoiles = document.getElementById('nombreEtoiles').value;
+
+    // Effectuez la requête avec les paramètres
+    compareOffers(identifiant, motDePasse, dateDebut, dateFin, nombrePersonnes, nombreEtoiles);
+  });
+
+  function compareOffers(identifiant, motDePasse, dateDebut, dateFin, nombrePersonnes, nombreEtoiles) {
+    var xhr = new XMLHttpRequest();
+
+    // Construisez l'URL avec les paramètres
+    var url = 'http://localhost:8080/comparateur/compare?' +
+            'identifiant=' + identifiant +
+            '&motDePasse=' + motDePasse +
+            '&dateDebut=' + dateDebut +
+            '&dateFin=' + dateFin +
+            '&nombrePersonnes=' + nombrePersonnes +
+            '&nombreEtoiles=' + nombreEtoiles;
+
+    xhr.open('POST', url, true);
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        // Parsez la réponse JSON
+        var offers = JSON.parse(xhr.responseText);
+
+        // Construisez le tableau HTML
+        var tableHtml = '<h2>Résultats de la comparaison :</h2><table border="1"><tr><th>ID Offre</th><th>Date Disponibilité</th><th>Date Expiration</th><th>Prix</th><th>Numéro Chambre</th><th>Nombre de Lits</th><th>Nom de l\'Hôtel</th><th>Image</th></tr>';
+
+        offers.forEach(function (offer) {
+          tableHtml += '<tr>';
+          tableHtml += `<td>${offer.idOffre}</td>`;
+          tableHtml += `<td>${offer.dateDisponibilite}</td>`;
+          tableHtml += `<td>${offer.dateExpiration}</td>`;
+          tableHtml += `<td>${offer.prix}</td>`;
+          tableHtml += `<td>${offer.numeroChambre}</td>`;
+          tableHtml += `<td>${offer.nombreLits}</td>`;
+          tableHtml += `<td>${offer.nomHotel}</td>`;
+          tableHtml += `<td>  <img src="/${offer.imageURL}" className="image-preview"> </td>`;
+
+          tableHtml += '</td>';
+          tableHtml += '</tr>';
+        });
+
+        tableHtml += '</table>';
+
+        // Affichez le tableau dans la page
+        document.getElementById('compareResult').innerHTML = tableHtml;
+      } else if (xhr.status === 401) {
+        alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
+      } else if (xhr.status === 404) {
+        alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
+      } else {
+        console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
+      }
+    };
+
+    xhr.onerror = function () {
+      console.error('Erreur de réseau lors de la tentative de faire la requête.');
+    };
+
+    // Envoyez la requête
+    xhr.send();
+  }
+
+  // Ajoutez cette fonction pour afficher l'image en grand
+  function showImage(imageUrl) {
+    window.open("/" + imageUrl, '_blank');
+  }
+</script>
+
+</body>
+
+</html>

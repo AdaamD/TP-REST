@@ -4,28 +4,25 @@ import jakarta.persistence.*;
 
 @Entity
 public class Offre {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idOffre;
-
     private String dateDisponibilite;
     private String dateExpiration;
     private int prix;
-
-    // Nouveaux champs ajoutés
     private int numeroChambre;
     private int nombreLits;
     private String nomHotel;
+    private String imageURL ;
 
     @ManyToOne
     @JoinColumn(name = "chambre_id")  // Assurez-vous de définir correctement le type de relation avec Chambre
     private Chambre chambre;
 
-    private String imageURL ;
 
 
-    public Offre() {
-    }
+    public Offre() {}
 
     public Offre(String dateDisponibilite, String dateExpiration, int prix, int numeroChambre, int nombreLits, String nomHotel) {
         this.dateDisponibilite = dateDisponibilite;

@@ -40,6 +40,15 @@ import java.util.Optional;
             return false;
         }
     }
+
+    public List<Agence> getAgences() {
+
+        return agences;
+
+    }
+
+    private List<Agence> agences = new ArrayList<>();
+
     /* Méthode d'initailisation BD */
     private Logger logger = LoggerFactory.getLogger(DataInitialization.class);
 
@@ -63,18 +72,31 @@ import java.util.Optional;
                 hotelRepository.save(hotel2);
                 logger.info("   Hotel saved: " + hotel2);
 
+                Hotel hotel3 = new Hotel("Hotel Toulouse", "Catégorie2", new Adresse("2 Avenue des Pins", "Paris", "75001", null, null), 3);
+                hotelRepository.save(hotel3);
+                logger.info("   Hotel saved: " + hotel3);
+
+                Hotel hotel4 = new Hotel("Hotel Lyon", "Catégorie2", new Adresse("2 Avenue des Pins", "Paris", "75001", null, null), 2);
+                hotelRepository.save(hotel4);
+                logger.info("   Hotel saved: " + hotel4);
+
             //Agence
                 Agence agence1 = new Agence("Agence1", "pass1");
                 agenceRepository.save(agence1);
+                    agence1.ajouterHotel(hotel3);
+                    agence1.ajouterHotel(hotel4);
                 logger.info("   Agence saved: " + agence1);
 
                 Agence agence2 = new Agence("Agence2", "pass2");
                 agenceRepository.save(agence2);
-                agence2.ajouterHotel(hotel2);
+                    agence2.ajouterHotel(hotel2);
                     agence2.ajouterHotel(hotel1);
                 agenceRepository.save(agence2);
                 logger.info("   Agence saved: " + agence2);
                 logger.info("hotel de l'agence 2 "+agence2.getHotels());
+
+                agences.add(agence1);
+                agences.add(agence2);
 
 
                 //CarteCredit
@@ -92,27 +114,34 @@ import java.util.Optional;
                 chambre1.setImage("img/img1.jpg");
                 chambreRepository.save(chambre1);
                 logger.info("   Chambre saved: " + chambre1);
+                hotel1.ajouterChambre(chambre1);
 
                 Chambre chambre2 = new Chambre(2, hotel2, 2, 2, 150);
                 chambre2.setDisponible(true);
                 chambre2.setImage("img/img2.jpg");
                 chambreRepository.save(chambre2);
                 logger.info("   Chambre saved: " + chambre2);
+                hotel2.ajouterChambre(chambre2);
 
-                Chambre chambre3 = new Chambre(3, hotel2, 1, 2, 100);
+
+                Chambre chambre3 = new Chambre(3, hotel3, 1, 2, 100);
                 chambre3.setDisponible(true);
                 chambre3.setImage("img/img3.jpg");
                 chambreRepository.save(chambre3);
                 logger.info("   Chambre saved: " + chambre3);
+                hotel3.ajouterChambre(chambre3);
 
-                Chambre chambre4 = new Chambre(4, hotel1, 1, 2, 110);
+
+                Chambre chambre4 = new Chambre(4, hotel4, 1, 2, 110);
                 chambre4.setDisponible(true);
                 chambre4.setImage("img/img4.jpg");
                 chambreRepository.save(chambre4);
                 logger.info("   Chambre saved: " + chambre4);
+                hotel4.ajouterChambre(chambre4);
 
+hotelRepository.save(hotel1);hotelRepository.save(hotel2);hotelRepository.save(hotel3);hotelRepository.save(hotel4);
 
-            //Client
+                //Client
                 CarteCredit carteCreditClient1 = new CarteCredit(111111111, new Date(), 111);
                 Client client1 = new Client("John", "Doe", "john.doe@example.com", 123456789, carteCreditClient1);
                 clientRepository.save(client1);

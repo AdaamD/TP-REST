@@ -1,5 +1,6 @@
 package Rest.Service;
 
+import Rest.Data.DataInitialization;
 import Rest.Models.Agence;
 import Rest.Models.Chambre;
 import Rest.Models.Hotel;
@@ -15,16 +16,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class RechercheChambreService {
 
     private final AgenceRepository agenceRepository;
     private final OffreRepository offreRepository;
+    private final DataInitialization dataInitialization;
+
 
     @Autowired
-    public RechercheChambreService(AgenceRepository agenceRepository, OffreRepository offreRepository) {
+    public RechercheChambreService(AgenceRepository agenceRepository, OffreRepository offreRepository, DataInitialization dataInitialization) {
         this.agenceRepository = agenceRepository;
         this.offreRepository = offreRepository;
+        this.dataInitialization = dataInitialization;
     }
 
     public List<Offre> getAvailableOffersByAgence(String agenceNom, String dateDebut, int nombreLit) {
@@ -70,9 +75,30 @@ public class RechercheChambreService {
                 nombreLits,
                 nomHotel
         );
-
-
-
         return offre;
+    }
+    public List<Offre> compareOffers(String dateDebut, String dateFin, int nombrePersonnes, int nombreEtoiles) {
+        List<Offre> comparedOffers = new ArrayList<>();
+
+        for (Agence agence : dataInitialization.getAgences()) {
+            for (Hotel hotel : agence.getHotels()) {
+                 for (Chambre chambre : hotel.getChambres()) {
+
+                    // Ajoutez la logique pour filtrer les offres en fonction des critères de recherche
+                    if (chambre.getNombreLit() >= nombrePersonnes
+                            && chambre.isDisponible()
+                            && hotel.getNbEtoiles() >= nombreEtoiles) {
+
+                        // Créez une nouvelle offre pour la comparaison
+                        Offre offre = createOffer(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom());
+                        offre.setImageURL(chambre.getImage());
+                        offreRepository.save(offre);
+                        comparedOffers.add(offre);
+                    }
+                }
+            }
+        }
+
+        return comparedOffers;
     }
 }
