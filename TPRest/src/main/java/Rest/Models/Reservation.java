@@ -89,4 +89,8 @@ public class Reservation {
     public void setDateArrive(String dateArrive) {
         this.dateArrive = dateArrive;
     }
+
+    public Offre getOffre() {
+        return offre;
+    }
 }

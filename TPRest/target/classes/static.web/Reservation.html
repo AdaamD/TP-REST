@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation de chambre</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
+
 <body>
 
 <h1>Réservation de chambre</h1>
@@ -48,7 +50,7 @@
         document.getElementById('offreId').value = offreIdParam;
     }
 
-    document.getElementById('reservationForm').addEventListener('submit', function(event) {
+    document.getElementById('reservationForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Empêche le formulaire de se soumettre normalement
 
         // Récupérez les valeurs des champs
@@ -81,7 +83,7 @@
 
         xhr.open('POST', url, true);
 
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Affichez une alerte pour confirmer la réservation
                 alert('Réservation confirmée!');
@@ -93,7 +95,7 @@
             }
         };
 
-        xhr.onerror = function() {
+        xhr.onerror = function () {
             console.error('Erreur de réseau lors de la tentative de faire la requête.');
         };
 
@@ -105,10 +107,20 @@
     function displayReservationSummary(reservationDetails) {
         console.log('Détails de la réservation reçus :', reservationDetails);
         var resultDiv = document.getElementById('reservationResult');
-        resultDiv.innerHTML = '<h2>Récapitulatif de la réservation :</h2><pre>' + reservationDetails + '</pre>';
-        // Ajoutez d'autres informations de réservation si nécessaire
+
+        // Créer une structure HTML pour afficher les détails de la réservation
+        var summaryHTML = '<h2>Récapitulatif de la réservation :</h2>';
+        summaryHTML += '<p>Numéro de réservation : ' + reservationDetails.id + '</p>';
+        summaryHTML += '<p>Nom du client : ' + reservationDetails.nom + '</p>';
+        summaryHTML += '<p>Prénom du client : ' + reservationDetails.prenom + '</p>';
+        summaryHTML += '<p>Date d\'arrivée : ' + reservationDetails.dateArrive + '</p>';
+        summaryHTML += '<p>Date de départ : ' + reservationDetails.dateDepart + '</p>';
+        summaryHTML += '<p>Prix de l\'offre : ' + reservationDetails.prixAPayer + ' euros</p>';
+
+        resultDiv.innerHTML = summaryHTML;
     }
 </script>
 
 </body>
+
 </html>
