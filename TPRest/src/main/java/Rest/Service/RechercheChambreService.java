@@ -77,28 +77,5 @@ public class RechercheChambreService {
         );
         return offre;
     }
-    public List<Offre> compareOffers(String dateDebut, String dateFin, int nombrePersonnes, int nombreEtoiles) {
-        List<Offre> comparedOffers = new ArrayList<>();
 
-        for (Agence agence : dataInitialization.getAgences()) {
-            for (Hotel hotel : agence.getHotels()) {
-                 for (Chambre chambre : hotel.getChambres()) {
-
-                    // Ajoutez la logique pour filtrer les offres en fonction des critères de recherche
-                    if (chambre.getNombreLit() >= nombrePersonnes
-                            && chambre.isDisponible()
-                            && hotel.getNbEtoiles() >= nombreEtoiles) {
-
-                        // Créez une nouvelle offre pour la comparaison
-                        Offre offre = createOffer(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom());
-                        offre.setImageURL(chambre.getImage());
-                        offreRepository.save(offre);
-                        comparedOffers.add(offre);
-                    }
-                }
-            }
-        }
-
-        return comparedOffers;
-    }
 }

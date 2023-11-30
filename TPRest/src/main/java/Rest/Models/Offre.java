@@ -15,6 +15,7 @@ public class Offre {
     private int nombreLits;
     private String nomHotel;
     private String imageURL ;
+    private String nomAgence ;
 
     @ManyToOne
     @JoinColumn(name = "chambre_id")  // Assurez-vous de définir correctement le type de relation avec Chambre
@@ -23,6 +24,15 @@ public class Offre {
 
 
     public Offre() {}
+    public Offre(String dateDisponibilite, String dateExpiration, int prix, int numeroChambre, int nombreLits, String nomHotel,String nomAgence) {
+        this.dateDisponibilite = dateDisponibilite;
+        this.dateExpiration = dateExpiration;
+        this.prix = prix;
+        this.numeroChambre = numeroChambre;
+        this.nombreLits = nombreLits;
+        this.nomHotel = nomHotel;
+        this.nomAgence=nomAgence ;
+    }
 
     public Offre(String dateDisponibilite, String dateExpiration, int prix, int numeroChambre, int nombreLits, String nomHotel) {
         this.dateDisponibilite = dateDisponibilite;
@@ -32,6 +42,7 @@ public class Offre {
         this.nombreLits = nombreLits;
         this.nomHotel = nomHotel;
     }
+
 
     public int getIdOffre() {
         return idOffre;
@@ -104,5 +115,11 @@ public class Offre {
 
     public void setImageURL(String image) {
         this.imageURL = image;
+    }
+
+    public String getNomAgence (){ return nomAgence ;  }
+
+    public void setAgence(String nomAgence) {
+        this.nomAgence = nomAgence;
     }
 }

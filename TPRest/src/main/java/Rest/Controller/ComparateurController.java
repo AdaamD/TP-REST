@@ -5,25 +5,10 @@ import Rest.Data.DataInitialization;
 
 import Rest.Exception.NoOfferException;
 
-import Rest.Exception.UnauthorizedException;
-
-import Rest.Models.Client;
-
 import Rest.Models.Offre;
 
-import Rest.Models.Reservation;
-
-import Rest.Repository.AgenceRepository;
-
-import Rest.Repository.ClientRepository;
-
-import Rest.Repository.OffreRepository;
-
-import Rest.Repository.ReservationRepository;
-
+import Rest.Service.ComparateurService;
 import Rest.Service.RechercheChambreService;
-
-import Rest.Service.ReservationService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -40,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import java.util.Optional;
-
 
 @CrossOrigin(origins = "http://localhost:8080")
 
@@ -54,18 +37,18 @@ public class ComparateurController {
 
     private final DataInitialization dataInitialization;
 
-    private final RechercheChambreService rechercheChambreService;
+    private final ComparateurService comparateurService;
 
     private final ObjectMapper objectMapper;
 
 
     @Autowired
 
-    public ComparateurController(DataInitialization dataInitialization, RechercheChambreService rechercheChambreService, ObjectMapper objectMapper) {
+    public ComparateurController(DataInitialization dataInitialization, RechercheChambreService rechercheChambreService, ComparateurService comparateurService, ObjectMapper objectMapper) {
 
         this.dataInitialization = dataInitialization;
+        this.comparateurService = comparateurService;
 
-        this.rechercheChambreService = rechercheChambreService;
 
         this.objectMapper = objectMapper;
 
@@ -76,9 +59,7 @@ public class ComparateurController {
 
     public ResponseEntity<String> compareOffers(
 
-            @RequestParam String identifiant,
 
-            @RequestParam String motDePasse,
 
             @RequestParam String dateDebut,
 
@@ -89,23 +70,12 @@ public class ComparateurController {
             @RequestParam int nombreEtoiles) {
 
 
-        // Vérifiez l'identifiant et le mot de passe
 
-        boolean credentialsValid = dataInitialization.validateCredentials(identifiant, motDePasse);
-
-
-        if (!credentialsValid) {
-
-            new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-            throw new UnauthorizedException("L'authentification a échoué. Veuillez vérifier vos informations.");
-
-        }
 
 
         // Votre logique métier pour comparer les offres
 
-        List<Offre> comparedOffers = rechercheChambreService.compareOffers(dateDebut, dateFin, nombrePersonnes, nombreEtoiles);
+        List<Offre> comparedOffers = comparateurService.compareOffers(dateDebut, dateFin, nombrePersonnes, nombreEtoiles);
 
 
         if (comparedOffers.isEmpty()) {
