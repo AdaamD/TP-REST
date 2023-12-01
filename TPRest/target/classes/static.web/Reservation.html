@@ -35,43 +35,133 @@
     <label for="dateDepart">Date de départ:</label>
     <input type="date" id="dateDepart" name="dateDepart" required><br>
 
+    <!-- Info supp-->
+    <div id="additionalFields" style="display: none;">
+        <label for="emailClient">Email du client:</label>
+        <input type="email" id="emailClient" name="emailClient"><br>
+
+        <label for="telephoneClient">Téléphone du client:</label>
+        <input type="tel" id="telephoneClient" name="telephoneClient"><br>
+
+        <label for="numeroCarte">Numéro de carte:</label>
+        <input type="number" id="numeroCarte" name="numeroCarte"><br>
+
+        <label for="expirationCarte">Expiration de la carte:</label>
+        <input type="date" id="expirationCarte" name="expirationCarte"><br>
+
+        <label for="codeSecurite">Code de sécurité:</label>
+        <input type="number" id="codeSecurite" name="codeSecurite"><br>
+    </div>
+
     <input type="submit" value="Réserver">
 </form>
 
 <div id="reservationResult"></div>
 
 <script>
-    // Récupérez les paramètres de l'URL
     var urlParams = new URLSearchParams(window.location.search);
     var offreIdParam = urlParams.get('offreId');
 
-    // Si le paramètre offreId existe, pré-remplissez le champ correspondant
     if (offreIdParam) {
         document.getElementById('offreId').value = offreIdParam;
     }
 
     document.getElementById('reservationForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Empêche le formulaire de se soumettre normalement
+        event.preventDefault();
 
-        // Récupérez les valeurs des champs
         var agenceNom = document.getElementById('nomAgence').value;
         var motDePasse = document.getElementById('motDePasse').value;
         var offreId = document.getElementById('offreId').value;
         var nomClient = document.getElementById('nomClient').value;
         var prenomClient = document.getElementById('prenomClient').value;
 
-        // Effectuez la requête avec les paramètres
-        makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient);
+        // Vérifier si les champs supplémentaires sont affichés
+        var additionalFieldsVisible = document.getElementById('additionalFields').style.display === 'block';
+
+        if (additionalFieldsVisible) {
+            // Si les champs supplémentaires sont affichés, demande les informations supplémentaires
+
+            // Récupérer les valeurs des zones de texte
+            var emailClient = document.getElementById('emailClient').value;
+            var telephoneClient = document.getElementById('telephoneClient').value;
+            var numeroCarte = document.getElementById('numeroCarte').value;
+            var expirationCarte = document.getElementById('expirationCarte').value;
+            var codeSecurite = document.getElementById('codeSecurite').value;
+
+            // Effectuer la réservation avec les informations supplémentaires
+            makeReservationWithAdditionalInfo(agenceNom, motDePasse, offreId, nomClient, prenomClient, emailClient, telephoneClient, numeroCarte, expirationCarte, codeSecurite);
+        } else {
+            // Sinon, utilisez makeReservation de base
+            makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient);
+        }
     });
 
     function makeReservation(agenceNom, motDePasse, offreId, nomClient, prenomClient) {
-        // Récupérez les valeurs des champs de date
+        var xhrCheckClient = new XMLHttpRequest();
+        var urlCheckClient = 'http://localhost:8080/agences/verifierClient?' +
+            'nomAgence=' + agenceNom +
+            '&mdpAgence=' + motDePasse +
+            '&nomClient=' + nomClient +
+            '&prenomClient=' + prenomClient;
+
+        xhrCheckClient.open('GET', urlCheckClient, true);
+
+        xhrCheckClient.onload = function () {
+            if (xhrCheckClient.status >= 200 && xhrCheckClient.status < 300) {
+                var response = xhrCheckClient.responseText;
+
+                if (response === 'Le client existe dans les données.') {
+                    var dateArrive = document.getElementById('dateArrive').value;
+                    var dateDepart = document.getElementById('dateDepart').value;
+
+                    var xhr = new XMLHttpRequest();
+                    var url = 'http://localhost:8080/agences/effectuerReservation?' +
+                        'nomAgence=' + agenceNom +
+                        '&mdpAgence=' + motDePasse +
+                        '&offreId=' + offreId +
+                        '&dateArrive=' + dateArrive +
+                        '&dateDepart=' + dateDepart +
+                        '&nomClient=' + nomClient +
+                        '&prenomClient=' + prenomClient;
+
+                    xhr.open('POST', url, true);
+
+                    xhr.onload = function () {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            alert('Réservation confirmée!');
+                            displayReservationSummary(JSON.parse(xhr.responseText));
+                        } else {
+                            console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
+                        }
+                    };
+
+                    xhr.onerror = function () {
+                        console.error('Erreur de réseau lors de la tentative de faire la requête.');
+                    };
+
+                    xhr.send();
+                } else {
+                    // Le client n'est pas dans data init, demandez les informations supplémentaires
+                    alert("Client non trouvé dans Data Init. Veuillez fournir les informations supplémentaires.");
+                    document.getElementById('additionalFields').style.display = 'block';
+                }
+            } else {
+                console.error('La vérification du client a échoué. Statut de la réponse : ' + xhrCheckClient.status);
+            }
+        };
+
+        xhrCheckClient.onerror = function () {
+            console.error('Erreur de réseau lors de la tentative de faire la requête de vérification du client.');
+        };
+
+        xhrCheckClient.send();
+    }
+
+    function makeReservationWithAdditionalInfo(agenceNom, motDePasse, offreId, nomClient, prenomClient, emailClient, telephoneClient, numeroCarte, expirationCarte, codeSecurite) {
         var dateArrive = document.getElementById('dateArrive').value;
         var dateDepart = document.getElementById('dateDepart').value;
 
         var xhr = new XMLHttpRequest();
-
-        // Construisez l'URL avec les paramètres, y compris les dates d'arrivée et de départ
         var url = 'http://localhost:8080/agences/effectuerReservation?' +
             'nomAgence=' + agenceNom +
             '&mdpAgence=' + motDePasse +
@@ -79,16 +169,18 @@
             '&dateArrive=' + dateArrive +
             '&dateDepart=' + dateDepart +
             '&nomClient=' + nomClient +
-            '&prenomClient=' + prenomClient;
+            '&prenomClient=' + prenomClient +
+            '&emailClient=' + emailClient +
+            '&telephoneClient=' + telephoneClient +
+            '&numeroCarte=' + numeroCarte +
+            '&expirationCarte=' + expirationCarte +
+            '&codeSecurite=' + codeSecurite;
 
         xhr.open('POST', url, true);
 
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
-                // Affichez une alerte pour confirmer la réservation
                 alert('Réservation confirmée!');
-
-                // Afficher un récapitulatif de la réservation
                 displayReservationSummary(JSON.parse(xhr.responseText));
             } else {
                 console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
@@ -99,23 +191,20 @@
             console.error('Erreur de réseau lors de la tentative de faire la requête.');
         };
 
-        // Envoyez la requête sans le corps (les données du client seront dans l'URL)
         xhr.send();
     }
 
-    // Fonction pour afficher un récapitulatif de la réservation
     function displayReservationSummary(reservationDetails) {
         console.log('Détails de la réservation reçus :', reservationDetails);
         var resultDiv = document.getElementById('reservationResult');
 
-        // Créer une structure HTML pour afficher les détails de la réservation
         var summaryHTML = '<h2>Récapitulatif de la réservation :</h2>';
         summaryHTML += '<p>Numéro de réservation : ' + reservationDetails.id + '</p>';
         summaryHTML += '<p>Nom du client : ' + reservationDetails.nom + '</p>';
         summaryHTML += '<p>Prénom du client : ' + reservationDetails.prenom + '</p>';
         summaryHTML += '<p>Date d\'arrivée : ' + reservationDetails.dateArrive + '</p>';
         summaryHTML += '<p>Date de départ : ' + reservationDetails.dateDepart + '</p>';
-        summaryHTML += '<p>Prix de l\'offre : ' + reservationDetails.prixAPayer + ' euros</p>';
+        summaryHTML += '<p>Prix de l\'offre : ' + reservationDetails.prix + ' euros</p>';
 
         resultDiv.innerHTML = summaryHTML;
     }

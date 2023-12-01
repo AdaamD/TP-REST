@@ -100,11 +100,11 @@ import java.util.Optional;
 
 
                 //CarteCredit
-                CarteCredit carteCredit1 = new CarteCredit(123456789, new Date(), 123);
+                CarteCredit carteCredit1 = new CarteCredit(123456789, "02/2023", 123);
                 carteCreditRepository.save(carteCredit1);
                 logger.info("   CarteCredit saved: " + carteCredit1);
 
-                CarteCredit carteCredit2 = new CarteCredit(987654321, new Date(), 456);
+                CarteCredit carteCredit2 = new CarteCredit(987654321, "01/2023", 456);
                 carteCreditRepository.save(carteCredit2);
                 logger.info("   CarteCredit saved: " + carteCredit2);
 
@@ -142,12 +142,12 @@ import java.util.Optional;
 hotelRepository.save(hotel1);hotelRepository.save(hotel2);hotelRepository.save(hotel3);hotelRepository.save(hotel4);
 
                 //Client
-                CarteCredit carteCreditClient1 = new CarteCredit(111111111, new Date(), 111);
+                CarteCredit carteCreditClient1 = new CarteCredit(111111111, "09/2025", 111);
                 Client client1 = new Client("John", "Doe", "john.doe@example.com", 123456789, carteCreditClient1);
                 clientRepository.save(client1);
                 logger.info("   Client saved: " + client1);
 
-                CarteCredit carteCreditClient2 = new CarteCredit(222222222, new Date(), 222);
+                CarteCredit carteCreditClient2 = new CarteCredit(222222222, "12/2024", 222);
                 Client client2 = new Client("Jane", "Doe", "jane.doe@example.com", 987654321, carteCreditClient2);
                 clientRepository.save(client2);
                 logger.info("   Client saved: " + client2);

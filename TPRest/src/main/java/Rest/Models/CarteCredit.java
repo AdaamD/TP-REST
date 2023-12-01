@@ -12,12 +12,12 @@ public class CarteCredit {
     private Long id;
 
     private Integer numero;
-    private Date dateExp;
+    private String dateExp;
     private Integer crypto;
 
     public CarteCredit() {}
 
-    public CarteCredit(Integer numero, Date dateExp, Integer crypto) {
+    public CarteCredit(Integer numero, String dateExp, Integer crypto) {
         this.numero = numero;
         this.dateExp = dateExp;
         this.crypto = crypto;
@@ -29,7 +29,7 @@ public class CarteCredit {
         return numero;
     }
 
-    public Date getDateExp() {
+    public String getDateExp() {
         return dateExp;
     }
 

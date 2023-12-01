@@ -80,9 +80,7 @@ public class ComparateurController {
 
         if (comparedOffers.isEmpty()) {
 
-            throw new NoOfferException("Aucune offre disponible pour les critères spécifiés.");
-
-        }
+            throw new NoOfferException("Aucune offre disponible pour les critères spécifiés.");        }
 
 
         // Convertir les offres en format JSON pour la page html
@@ -101,6 +99,12 @@ public class ComparateurController {
 
         }
 
+    }
+    //Gestion des exceptions
+    @ExceptionHandler(NoOfferException.class)
+    public ResponseEntity<String> handleNoOfferException(NoOfferException ex) {
+        // Vous pouvez personnaliser le message d'erreur ici si nécessaire
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
     }
 
 }

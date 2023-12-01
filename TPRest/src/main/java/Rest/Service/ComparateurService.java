@@ -59,22 +59,20 @@ public class ComparateurService {
         for (Agence agence : dataInitialization.getAgences()) {
             for (Hotel hotel : agence.getHotels()) {
                 for (Chambre chambre : hotel.getChambres()) {
-
-                    // Ajoutez la logique pour filtrer les offres en fonction des critères de recherche
-                    if (chambre.getNombreLit() >= nombrePersonnes
-                            && chambre.isDisponible()
-                            && hotel.getNbEtoiles() >= nombreEtoiles) {
-
-                        // Créez une nouvelle offre pour la comparaison
+                    if (chambre.getNombreLit() >= nombrePersonnes && chambre.isDisponible() && hotel.getNbEtoiles() >= nombreEtoiles) {
                         Offre offre = createOffer(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom(), agence.getNom());
                         offre.setImageURL(chambre.getImage());
-                        offreRepository.save(offre);
                         comparedOffers.add(offre);
                     }
                 }
             }
         }
 
+        for (Offre offre : comparedOffers) {
+            offreRepository.save(offre);
+        }
+
         return comparedOffers;
     }
+
 }

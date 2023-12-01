@@ -13,5 +13,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    // Ajoutez d'autres gestionnaires pour d'autres exceptions personnalisées si nécessaire
 }

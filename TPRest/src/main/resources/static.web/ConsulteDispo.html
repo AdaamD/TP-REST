@@ -58,15 +58,15 @@
             if (xhr.status >= 200 && xhr.status < 300) {
                 var responseData = JSON.parse(xhr.responseText);
                 displayData(responseData);
-            } else
-            {
-                if (xhr.status==401){
-                alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
-                }else
-                if (xhr.status==404){
-                alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
-            }
+            } else {
+                console.error('Erreur HTTP: ' + xhr.status);
+                // Ajoutez des logs pour voir la réponse complète du serveur
 
+                if (xhr.status === 401) {
+                    alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
+                } else if (xhr.status === 404) {
+                    alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
+                }
             }
         };
 
@@ -79,6 +79,15 @@
 
     function displayData(data) {
         var resultDiv = document.getElementById('result');
+
+        // Vérifiez s'il y a des offres disponibles
+        if (data.length === 0) {
+            console.log("Aucune offre disponible pour les critères spécifiés.");  // Ajoutez cette ligne pour le débogage
+            alert("Aucune offre disponible pour les critères spécifiés.");
+            resultDiv.innerHTML = '<h2>Aucune offre disponible pour les critères spécifiés.</h2>';
+            return;
+        }
+
         // Créez un tableau HTML pour afficher les offres
         resultDiv.innerHTML = '<h2>Résultats :</h2>';
         var table = document.createElement('table');
@@ -97,22 +106,23 @@
         data.forEach(function (offre) {
             var row = table.insertRow();
             row.innerHTML = `
-            <td>${offre.idOffre}</td>
-            <td>${offre.prix} euros</td>
-            <td>${offre.nomHotel}</td>
-            <td>${offre.numeroChambre}</td>
-            <td>${offre.nombreLits}</td>
-            <td>
-                <img src="/${offre.imageURL}" class="image-preview">
-            </td>
-            <td>
-                <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
-            </td>
-        `;
+        <td>${offre.idOffre}</td>
+        <td>${offre.prix} euros</td>
+        <td>${offre.nomHotel}</td>
+        <td>${offre.numeroChambre}</td>
+        <td>${offre.nombreLits}</td>
+        <td>
+            <img src="/${offre.imageURL}" class="image-preview">
+        </td>
+        <td>
+            <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
+        </td>
+    `;
         });
 
         resultDiv.appendChild(table);
     }
+
     function makeReservation(offreId) {
         // Redirigez l'utilisateur vers la page de création de réservation avec l'identifiant de l'offre
         window.location.href = 'Reservation.html?offreId=' + offreId;
