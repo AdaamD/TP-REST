@@ -28,7 +28,6 @@
     <label for="prenomClient">Prénom du client:</label>
     <input type="text" id="prenomClient" name="prenomClient" required><br>
 
-    <!-- Ajout des champs de date d'arrivée et de départ -->
     <label for="dateArrive">Date d'arrivée:</label>
     <input type="date" id="dateArrive" name="dateArrive" required><br>
 
@@ -142,7 +141,7 @@
                     xhr.send();
                 } else {
                     // Le client n'est pas dans data init, demandez les informations supplémentaires
-                    alert("Client non trouvé dans Data Init. Veuillez fournir les informations supplémentaires.");
+                    alert("Client non trouvé dans la base données. Veuillez fournir les informations supplémentaires.");
                     document.getElementById('additionalFields').style.display = 'block';
                 }
             } else {

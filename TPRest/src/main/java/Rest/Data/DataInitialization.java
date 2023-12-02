@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-/* Le .save(...) sert a sauvegarder l'entité que t'as crée/modifié */
 @Configuration
 @EnableTransactionManagement
     public class DataInitialization {
@@ -41,44 +40,40 @@ import java.util.Optional;
         }
     }
 
-    public List<Agence> getAgences() {
-
-        return agences;
-
-    }
+    public List<Agence> getAgences() {return agences ;   }
 
     private List<Agence> agences = new ArrayList<>();
+
 
     /* Méthode d'initailisation BD */
     private Logger logger = LoggerFactory.getLogger(DataInitialization.class);
 
         @Bean
         public CommandLineRunner initDatabase(
-                AdresseRepository adresseRepository,
                 AgenceRepository agenceRepository,
                 CarteCreditRepository carteCreditRepository,
                 ChambreRepository chambreRepository,
                 ClientRepository clientRepository,
-                HotelRepository hotelRepository,
-                ReservationRepository reservationRepository) {
+                HotelRepository hotelRepository) {
             return args -> {
 
             //Hotel
-                Hotel hotel1 = new Hotel("Hotel Montpellier", "Catégorie1", new Adresse("France", "Paris", "Champs-Élysées", "Quartier1", 12345), 3);
+                Hotel hotel1 = new Hotel("Hôtel Le Bristol Paris", "Luxe", new Adresse("France", "Paris", "112 Rue du Faubourg Saint-Honoré", "8th arrondissement", 75008), 5);
                 hotelRepository.save(hotel1);
                 logger.info("   Hotel saved: " + hotel1);
 
-                Hotel hotel2 = new Hotel("Hotel Paris", "Catégorie2", new Adresse("2 Avenue des Pins", "Paris", "75001", null, null), 4);
+                Hotel hotel2 = new Hotel("Hôtel Rose", "Affaires", new Adresse("France", "Toulouse", "2 Avenue des Pins", "City Center", 31000), 3);
                 hotelRepository.save(hotel2);
                 logger.info("   Hotel saved: " + hotel2);
 
-                Hotel hotel3 = new Hotel("Hotel Toulouse", "Catégorie2", new Adresse("2 Avenue des Pins", "Paris", "75001", null, null), 3);
+                Hotel hotel3 = new Hotel("Hôtel des Lys", "Modéré", new Adresse("France", "Montpellier", "1 Rue de la République", "Historic Center", 34000), 3);
                 hotelRepository.save(hotel3);
                 logger.info("   Hotel saved: " + hotel3);
 
-                Hotel hotel4 = new Hotel("Hotel Lyon", "Catégorie2", new Adresse("2 Avenue des Pins", "Paris", "75001", null, null), 2);
+                Hotel hotel4 = new Hotel("Lyon Grand Hôtel", "Confort", new Adresse("France", "Lyon", "Rue de la République", "Presqu'île", 69001), 2);
                 hotelRepository.save(hotel4);
                 logger.info("   Hotel saved: " + hotel4);
+
 
             //Agence
                 Agence agence1 = new Agence("Agence1", "pass1");
@@ -93,13 +88,12 @@ import java.util.Optional;
                     agence2.ajouterHotel(hotel1);
                 agenceRepository.save(agence2);
                 logger.info("   Agence saved: " + agence2);
-                logger.info("hotel de l'agence 2 "+agence2.getHotels());
 
                 agences.add(agence1);
                 agences.add(agence2);
 
 
-                //CarteCredit
+            //CarteCredit
                 CarteCredit carteCredit1 = new CarteCredit(123456789, "02/2023", 123);
                 carteCreditRepository.save(carteCredit1);
                 logger.info("   CarteCredit saved: " + carteCredit1);
@@ -109,16 +103,16 @@ import java.util.Optional;
                 logger.info("   CarteCredit saved: " + carteCredit2);
 
             //Chambre
-                Chambre chambre1 = new Chambre(1, hotel1, 1, 1, 100);
+                Chambre chambre1 = new Chambre(1, hotel1, 1, 1, 120);
                 chambre1.setDisponible(true);
-                chambre1.setImage("img/img1.jpg");
+                chambre1.setImage("img/Designer1.jpeg");
                 chambreRepository.save(chambre1);
                 logger.info("   Chambre saved: " + chambre1);
                 hotel1.ajouterChambre(chambre1);
 
                 Chambre chambre2 = new Chambre(2, hotel2, 2, 2, 150);
                 chambre2.setDisponible(true);
-                chambre2.setImage("img/img2.jpg");
+                chambre2.setImage("img/Designer2.jpeg");
                 chambreRepository.save(chambre2);
                 logger.info("   Chambre saved: " + chambre2);
                 hotel2.ajouterChambre(chambre2);
@@ -126,42 +120,62 @@ import java.util.Optional;
 
                 Chambre chambre3 = new Chambre(3, hotel3, 1, 2, 100);
                 chambre3.setDisponible(true);
-                chambre3.setImage("img/img3.jpg");
+                chambre3.setImage("img/Designer3.jpeg");
                 chambreRepository.save(chambre3);
                 logger.info("   Chambre saved: " + chambre3);
                 hotel3.ajouterChambre(chambre3);
 
 
-                Chambre chambre4 = new Chambre(4, hotel4, 1, 2, 110);
+                Chambre chambre4 = new Chambre(4, hotel4, 3, 2, 110);
                 chambre4.setDisponible(true);
-                chambre4.setImage("img/img4.jpg");
+                chambre4.setImage("img/Designer4.jpeg");
                 chambreRepository.save(chambre4);
                 logger.info("   Chambre saved: " + chambre4);
                 hotel4.ajouterChambre(chambre4);
 
+                Chambre chambre5 = new Chambre(5, hotel1, 2, 2, 150);
+                chambre5.setDisponible(true);
+                chambre5.setImage("img/Designer5.jpeg");
+                chambreRepository.save(chambre5);
+                logger.info("   Chambre saved: " + chambre5);
+                hotel1.ajouterChambre(chambre5);
+
+                Chambre chambre6 = new Chambre(6, hotel2, 1, 2, 120);
+                chambre6.setDisponible(true);
+                chambre6.setImage("img/Designer6.jpeg");
+                chambreRepository.save(chambre6);
+                logger.info("   Chambre saved: " + chambre6);
+                hotel2.ajouterChambre(chambre6);
+
+                Chambre chambre7 = new Chambre(7, hotel3, 3, 4, 140);
+                chambre7.setDisponible(true);
+                chambre7.setImage("img/Designer7.jpeg");
+                chambreRepository.save(chambre7);
+                logger.info("   Chambre saved: " + chambre7);
+                hotel3.ajouterChambre(chambre7);
+
+                Chambre chambre8 = new Chambre(8, hotel4, 1, 1, 60);
+                chambre8.setDisponible(true);
+                chambre8.setImage("img/Designer8.jpeg");
+                chambreRepository.save(chambre8);
+                logger.info("   Chambre saved: " + chambre8);
+                hotel4.ajouterChambre(chambre8);
+
 hotelRepository.save(hotel1);hotelRepository.save(hotel2);hotelRepository.save(hotel3);hotelRepository.save(hotel4);
+
 
                 //Client
                 CarteCredit carteCreditClient1 = new CarteCredit(111111111, "09/2025", 111);
-                Client client1 = new Client("John", "Doe", "john.doe@example.com", 123456789, carteCreditClient1);
+                Client client1 = new Client("DAIA", "Adam", "adam@gl.com", 123456789, carteCreditClient1);
                 clientRepository.save(client1);
                 logger.info("   Client saved: " + client1);
 
                 CarteCredit carteCreditClient2 = new CarteCredit(222222222, "12/2024", 222);
-                Client client2 = new Client("Jane", "Doe", "jane.doe@example.com", 987654321, carteCreditClient2);
+                Client client2 = new Client("DAFAOUI", "Nabil", "nabil@gl.com", 987654321, carteCreditClient2);
                 clientRepository.save(client2);
                 logger.info("   Client saved: " + client2);
 
-/*
-            //Reservation
-                Reservation reservation1 = new Reservation("John", "Doe", client1, 100, "2023-01-01", "2023-01-05");
-                reservationRepository.save(reservation1);
-                logger.info("   Reservation saved: " + reservation1);
 
-                Reservation reservation2 = new Reservation("Jane", "Doe", client2, 150, "2023-01-02", "2023-01-06");
-                reservationRepository.save(reservation2);
-                logger.info("   Reservation saved: " + reservation2);
-*/
                 logger.info("\nFin d'initialisation de la data-base");
 
             };

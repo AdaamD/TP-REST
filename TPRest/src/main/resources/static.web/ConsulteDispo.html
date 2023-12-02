@@ -42,6 +42,7 @@
         makeRequest(identifiant, motDePasse, dateDebut, nombreLit);
     });
 
+    /* fonction d'appel du SW de recherche */
     function makeRequest(identifiant, motDePasse, dateDebut, nombreLit) {
         var xhr = new XMLHttpRequest();
 
@@ -60,7 +61,6 @@
                 displayData(responseData);
             } else {
                 console.error('Erreur HTTP: ' + xhr.status);
-                // Ajoutez des logs pour voir la réponse complète du serveur
 
                 if (xhr.status === 401) {
                     alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
@@ -77,12 +77,12 @@
         xhr.send();
     }
 
+    /* Affichage des données */
     function displayData(data) {
         var resultDiv = document.getElementById('result');
 
         // Vérifiez s'il y a des offres disponibles
         if (data.length === 0) {
-            console.log("Aucune offre disponible pour les critères spécifiés.");  // Ajoutez cette ligne pour le débogage
             alert("Aucune offre disponible pour les critères spécifiés.");
             resultDiv.innerHTML = '<h2>Aucune offre disponible pour les critères spécifiés.</h2>';
             return;
@@ -99,7 +99,7 @@
             <th>Numero de la chambre</th>
             <th>Nombre de lits</th>
             <th>Image</th>
-            <th>Action</th> <!-- Nouvelle colonne pour le bouton de réservation -->
+            <th>Action</th>
         </tr>
     `;
 
@@ -111,9 +111,10 @@
         <td>${offre.nomHotel}</td>
         <td>${offre.numeroChambre}</td>
         <td>${offre.nombreLits}</td>
-        <td>
-            <img src="/${offre.imageURL}" class="image-preview">
-        </td>
+        <td onclick="showImage('/${offre.imageURL}')">
+    <img src="/${offre.imageURL}" class="image-preview" alt="Image de l'offre">
+</td>
+
         <td>
             <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
         </td>
@@ -123,14 +124,13 @@
         resultDiv.appendChild(table);
     }
 
+    /* Redirection vers page de réservation */
     function makeReservation(offreId) {
-        // Redirigez l'utilisateur vers la page de création de réservation avec l'identifiant de l'offre
         window.location.href = 'Reservation.html?offreId=' + offreId;
     }
 
-    // Ajoutez cette fonction pour afficher l'image en grand
     function showImage(imageUrl) {
-        window.open("/"+imageUrl, '_blank');
+        window.open(imageUrl, '_blank');
     }
 </script>
 
