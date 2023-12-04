@@ -67,7 +67,7 @@ public class ReservationService {
             existingClient = new Client(nomClient, prenomClient, emailClient, telephoneClient, carteCreditClient);
             clientRepository.save(existingClient);
         }
-
+       offre.setPrix((int) (offre.getPrix()*0.95));
      // Creation de la réservation
         Reservation reservation = new Reservation(
                 existingClient.getNom(),

@@ -24,6 +24,7 @@
     <input type="number" id="nombreLit" name="nombreLit" required><br>
 
     <input type="submit" value="Rechercher">
+    <button onclick="window.location.href='Comparateur.html'" type="button">Comparateur</button>
 </form>
 
 <div id="result"></div>
@@ -111,9 +112,10 @@
         <td>${offre.nomHotel}</td>
         <td>${offre.numeroChambre}</td>
         <td>${offre.nombreLits}</td>
-        <td>
-            <img src="/${offre.imageURL}" class="image-preview">
-        </td>
+        <td onclick="showImage('/${offre.imageURL}')">
+    <img src="/${offre.imageURL}" class="image-preview" alt="Image de l'offre">
+</td>
+
         <td>
             <button onclick="makeReservation('${offre.idOffre}')">Faire une réservation</button>
         </td>
@@ -129,7 +131,7 @@
     }
 
     function showImage(imageUrl) {
-        window.open("/"+imageUrl, '_blank');
+        window.open(imageUrl, '_blank');
     }
 </script>
 

@@ -118,7 +118,9 @@
             <td>${offer.nombreLits}</td>
             <td>${offer.nomHotel}</td>
             <td>${offer.nomAgence}</td>
-            <td> <img src="/${offer.imageURL}" class="image-preview" onclick="showImage('${offer.imageURL}')"> </td>
+            <td onclick="showImage('/${offer.imageURL}')">
+                <img src="/${offer.imageURL}" class="image-preview" alt="Image de l'offre">
+            </td>
             <td>
                 <button onclick="makeReservation('${offer.idOffre}')">Réserver</button>
             </td>
@@ -126,10 +128,19 @@
     });
   }
 
+  function showImage(imageUrl) {
+    window.open(imageUrl, '_blank');
+  }
+
 
   function makeReservation(offreId) {
     window.location.href = 'Reservation.html?offreId=' + offreId;
   }
+
+  function showImage(imageUrl) {
+    window.open(imageUrl, '_blank');
+  }
+
 </script>
 
 </body>
