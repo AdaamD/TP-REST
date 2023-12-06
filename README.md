@@ -79,7 +79,7 @@ Suivez ces étapes pour exécuter le projet sur votre machine :
 Ce projet a été réalisé par :
 
 - DAIA Adam
-- DAFAOUI Mohamed
+- DAFAOUI Mohammed
 
 Étudiants en M1 Génie Logiciel à l'Université de Montpellier
 
