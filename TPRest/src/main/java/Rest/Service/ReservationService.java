@@ -5,6 +5,7 @@ import Rest.Models.CarteCredit;
 import Rest.Models.Client;
 import Rest.Models.Offre;
 import Rest.Models.Reservation;
+import Rest.Repository.ChambreRepository;
 import Rest.Repository.ClientRepository;
 import Rest.Repository.OffreRepository;
 import Rest.Repository.ReservationRepository;
@@ -23,15 +24,17 @@ public class ReservationService {
     private final OffreRepository offreRepository;
     private final ClientRepository clientRepository;
     private final ReservationRepository reservationRepository;
+    private final ChambreRepository chambreRepository;
 
 
 /* Constructeur */
     @Autowired
-    public ReservationService(DataInitialization dataInitialization, OffreRepository offreRepository, ClientRepository clientRepository, ReservationRepository reservationRepository) {
+    public ReservationService(DataInitialization dataInitialization, OffreRepository offreRepository, ClientRepository clientRepository, ReservationRepository reservationRepository, ChambreRepository chambreRepository) {
         this.dataInitialization = dataInitialization;
         this.offreRepository = offreRepository;
         this.clientRepository = clientRepository;
         this.reservationRepository = reservationRepository;
+        this.chambreRepository = chambreRepository;
     }
 
 /* Méthodes */
@@ -42,12 +45,7 @@ public class ReservationService {
             String nomClient, String prenomClient, String emailClient, int telephoneClient,
             int numeroCarte, String expirationCarte, int codeSecurite) {
 
-    // Verification de l'authentification
-        boolean authentificationValide = dataInitialization.validateCredentials(nomAgence, mdpAgence);
 
-        if (!authentificationValide) {
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
     // Verification si l'offre est existante
         Optional<Offre> offreOptional = offreRepository.findById(offreId);
         if (offreOptional.isEmpty()) {
@@ -55,6 +53,7 @@ public class ReservationService {
         }
 
         Offre offre = offreOptional.get();
+
 
      // Verification de l'existance du client en Base de données
         Optional<Client> existingClientOptional = clientRepository.findByNomAndPrenom(nomClient, prenomClient);
@@ -67,7 +66,11 @@ public class ReservationService {
             existingClient = new Client(nomClient, prenomClient, emailClient, telephoneClient, carteCreditClient);
             clientRepository.save(existingClient);
         }
-       offre.setPrix((int) (offre.getPrix()*0.95));
+        if (!offre.getChambre().isDisponible()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("L'offre spécifiée n'est pas disponible pour réservation");
+        }
+
+      offre.setPrix((int) (offre.getPrix()*0.95));
      // Creation de la réservation
         Reservation reservation = new Reservation(
                 existingClient.getNom(),
@@ -78,6 +81,10 @@ public class ReservationService {
                 offre.getPrix(),
                 offre
         );
+        offre.getChambre().setDisponible(false);
+        chambreRepository.save(offre.getChambre());
+        offreRepository.save(offre);
+
 
         reservationRepository.save(reservation);
 

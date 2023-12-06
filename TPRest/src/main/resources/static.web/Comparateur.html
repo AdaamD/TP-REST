@@ -56,7 +56,10 @@
       } else {
          if (xhr.status === 204) {
           // Affichez un message pop-up explicite
-          alert("Aucune chambre ne correspond à la demande. Veuillez ajuster vos critères de recherche." + xhr.statusText);
+           console.log("Aucune chambre ne correspond à la demande. Erreur : "+ xhr.status);
+           alert("Aucune chambre ne correspond à la demande. Veuillez ajuster vos critères de recherche." + xhr.statusText);
+           var resultDiv = document.getElementById('compareResult');
+           resultDiv.innerHTML = '';
         } else {
           console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
         }
@@ -81,6 +84,7 @@
 
   function displayComparisonResults(data) {
     var resultDiv = document.getElementById('compareResult');
+    resultDiv.innerHTML = '';
 
     // Récupérez la table ou créez-la si elle n'existe pas
     var table = resultDiv.querySelector('table');

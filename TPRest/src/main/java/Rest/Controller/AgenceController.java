@@ -86,6 +86,13 @@ public class AgenceController {
             @RequestParam(required = false) String expirationCarte,
             @RequestParam(required = false) Integer codeSecurite) {
 
+        // Vérifiez l'authentification
+        boolean credentialsValid = dataInitialization.validateCredentials(nomAgence, mdpAgence);
+
+        if (!credentialsValid) {
+            return new ResponseEntity<>("L'authentification a échoué. Veuillez vérifier vos informations.", HttpStatus.UNAUTHORIZED);
+        }
+
         int telephoneInt = (telephoneClient != null) ? telephoneClient.intValue() : 0;
         int numeroCarteInt = (numeroCarte != null) ? numeroCarte.intValue() : 0;
         int codeSecuriteInt = (codeSecurite != null) ? codeSecurite.intValue() : 0;

@@ -118,7 +118,7 @@ import java.util.Optional;
                 hotel2.ajouterChambre(chambre2);
 
 
-                Chambre chambre3 = new Chambre(3, hotel3, 1, 2, 100);
+                Chambre chambre3 = new Chambre(3, hotel3, 1, 3, 100);
                 chambre3.setDisponible(true);
                 chambre3.setImage("img/Designer3.jpeg");
                 chambreRepository.save(chambre3);

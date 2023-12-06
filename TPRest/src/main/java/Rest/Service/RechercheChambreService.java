@@ -8,28 +8,28 @@ import Rest.Repository.AgenceRepository;
 import Rest.Repository.OffreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class RechercheChambreService {
 
-/* Attributs */
+    /* Attributs */
     private final AgenceRepository agenceRepository;
     private final OffreRepository offreRepository;
 
-/* Constructeur */
+    /* Constructeur */
     @Autowired
     public RechercheChambreService(AgenceRepository agenceRepository, OffreRepository offreRepository) {
         this.agenceRepository = agenceRepository;
         this.offreRepository = offreRepository;
     }
 
-/* Méthodes */
+    /* Méthodes */
 
     // Recherche Chambre par Agence
     public List<Offre> rechercheOffreParAgence(String agenceNom, String dateDebut, int nombreLit) {
@@ -40,14 +40,29 @@ public class RechercheChambreService {
             Agence agence = agenceOptional.get();
             List<Offre> availableOffers = new ArrayList<>();
 
+            // Récupérer toutes les offres existantes
+            List<Offre> existingOffers = offreRepository.findAll();
+
             for (Hotel hotel : agence.getHotels()) {
                 for (Chambre chambre : hotel.getChambres()) {
                     if (chambre.getNombreLit() >= nombreLit && chambre.isDisponible()) {
-                        // Création d'une nouvelle offre
-                        Offre offre = creationOffre(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom());
-                        offre.setImageURL(chambre.getImage());
-                        offreRepository.save(offre);
-                        availableOffers.add(offre);
+
+                        // Vérifier si une offre existante pour la chambre actuelle
+                        boolean offreExistante = existingOffers.stream()
+                                .anyMatch(existingOffer ->
+                                        existingOffer.getNumeroChambre() == chambre.getNumChambre()
+                                                && !existingOffer.getChambre().isDisponible());
+
+                        // Si aucune offre existante, créer une nouvelle offre
+                        if (!offreExistante) {
+                            // Création d'une nouvelle offre
+                            Offre offre = creationOffre(dateDebut, chambre.getPrix(), chambre.getNumChambre(), chambre.getNombreLit(), hotel.getNom());
+                            offre.setChambre(chambre);
+                            offre.setImageURL(chambre.getImage());
+                            offre.setAgence(agence.getNom());
+                            offreRepository.save(offre);
+                            availableOffers.add(offre);
+                        }
                     }
                 }
             }
@@ -60,7 +75,6 @@ public class RechercheChambreService {
 
     // Creation d'Offre
     private Offre creationOffre(String dateDebut, int prix, int numeroChambre, int nombreLits, String nomHotel) {
-
         LocalDate dateDebutObj = LocalDate.parse(dateDebut);
         LocalDate dateExpirationObj = dateDebutObj.plusDays(10);
 
@@ -72,7 +86,7 @@ public class RechercheChambreService {
                 nombreLits,
                 nomHotel
         );
+
         return offre;
     }
-
 }

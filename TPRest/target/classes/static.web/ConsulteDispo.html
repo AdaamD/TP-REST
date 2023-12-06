@@ -57,16 +57,26 @@
         xhr.open('GET', url, true);
 
         xhr.onload = function() {
+
             if (xhr.status >= 200 && xhr.status < 300) {
                 var responseData = JSON.parse(xhr.responseText);
                 displayData(responseData);
             } else {
                 console.error('Erreur HTTP: ' + xhr.status);
-
+                //Gestion des erreurs
                 if (xhr.status === 401) {
+                    console.log("L'authentification a échoué. Erreur : "+ xhr.status);
                     alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
+                    // n'affiche pas de résultat car l'authentification a échoué.
+                    var resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = '';
+
                 } else if (xhr.status === 404) {
+                    console.log("Aucune offre disponible. Erreur : "+ xhr.status);
                     alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
+                    //Message indiquant qu'aucune offre n'est disponible
+                    var resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = '<h2>Aucune offre disponible pour les critères spécifiés.</h2>';
                 }
             }
         };
@@ -81,13 +91,7 @@
     /* Affichage des données */
     function displayData(data) {
         var resultDiv = document.getElementById('result');
-
-        // Vérifiez s'il y a des offres disponibles
-        if (data.length === 0) {
-            alert("Aucune offre disponible pour les critères spécifiés.");
-            resultDiv.innerHTML = '<h2>Aucune offre disponible pour les critères spécifiés.</h2>';
-            return;
-        }
+        resultDiv.innerHTML = '';
 
         // Créez un tableau HTML pour afficher les offres
         resultDiv.innerHTML = '<h2>Résultats :</h2>';

@@ -130,7 +130,22 @@
                             alert('Réservation confirmée!');
                             displayReservationSummary(JSON.parse(xhr.responseText));
                         } else {
-                            console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
+                            console.log("CODE DE D'ERREUR : " + xhr.status);
+
+                            if (xhr.status === 404) {
+                                console.error("L'offre spécifié n'existe pas. Erreur : " + xhr.status);
+                                alert("L'offre spécifié n'existe pas");
+                                //Message indiquant qu'aucune offre n'est disponible
+                                var resultDiv = document.getElementById('reservationResult');
+                                resultDiv.innerHTML = ''
+                            }
+                            else if (xhr.status === 400) {
+                                console.log("La réservation n'a pas pu être effectuée l'offre n'est pas disponible. Erreur : " + xhr.status);
+                                alert("La réservation n'a pas pu être effectuée l'offre n'est pas disponible.");
+                                // Message indiquant que la réservation n'a pas pu être effectuée
+                                var resultDiv = document.getElementById('reservationResult');
+                                resultDiv.innerHTML = '';
+                            }
                         }
                     };
 
@@ -145,7 +160,13 @@
                     document.getElementById('additionalFields').style.display = 'block';
                 }
             } else {
-                console.error('La vérification du client a échoué. Statut de la réponse : ' + xhrCheckClient.status);
+                if (xhrCheckClient.status === 401){
+                console.log("L'authentification a échoué. Erreur : "+ xhrCheckClient.status);
+                alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhrCheckClient.statusText);
+                    // n'affiche pas de résultat car l'authentification a échoué.
+                    var resultDiv = document.getElementById('reservationResult');
+                    resultDiv.innerHTML = '';
+                }
             }
         };
 

@@ -65,14 +65,14 @@
                 console.error('Erreur HTTP: ' + xhr.status);
                 //Gestion des erreurs
                 if (xhr.status === 401) {
-                    console.log("L'authentification a échoué "+ xhr.status);
+                    console.log("L'authentification a échoué. Erreur : "+ xhr.status);
                     alert("L'authentification a échoué. Veuillez vérifier vos informations." + xhr.statusText);
                     // n'affiche pas de résultat car l'authentification a échoué.
                     var resultDiv = document.getElementById('result');
                     resultDiv.innerHTML = '';
 
                 } else if (xhr.status === 404) {
-                    console.log("Aucune offre disponible "+ xhr.status);
+                    console.log("Aucune offre disponible. Erreur : "+ xhr.status);
                     alert("Aucune offre disponible pour les critères spécifiés." + xhr.statusText);
                     //Message indiquant qu'aucune offre n'est disponible
                     var resultDiv = document.getElementById('result');
